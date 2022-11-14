@@ -35,6 +35,7 @@ const HomePage: NextPage = ( props ) => {
 //se usa si sabemos de antemano lo que la pagina necesita, en este caso cargar los 150 pokemons 
 //al cargar la pagina ya vienen cargados los 150 pokemons, se cargaron a la hora de construir la aplicacion
 //getStaticProps solo se ejecuta del lado del servidor  y solo se ejecuta en el build time
+//en desarrollo se carga cada vez que se ejecuta pero en produccion solo se carga una sola vez
 export const getStaticProps: GetStaticProps = async (ctx) => {
  
   return {
