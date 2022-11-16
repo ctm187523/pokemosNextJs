@@ -5,6 +5,8 @@ import type { AppProps } from 'next/app';
 //se podria poner yarn add @nextui-org/react 
 //sin indicar la version que queremos instalar
 import { NextUIProvider } from '@nextui-org/react';
+
+//importamos el theme
 import { darkTheme } from '../themes';
 
 
