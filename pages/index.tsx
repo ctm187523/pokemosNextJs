@@ -4,6 +4,8 @@ import { GetStaticProps } from 'next'
 import { pokeAPi } from '../api';
 import { PokemonListResponse } from '../interfaces';
 import { SmallPokemon } from '../interfaces/pokemon-list';
+import { Grid } from '@nextui-org/react';
+import { PokemonCard } from '../components/pokemon';
 
 
 //interface para tipar las props
@@ -12,6 +14,7 @@ interface Props {
 }
 
 //tipamos las props con la interfaz creada arriba Props
+//en Lugar de NextPage podriamos usar como hemos echo en otros componentes FC -funcional component
 const HomePage: NextPage<Props> = ({ pokemons }) => {
 
   //console.log(pokemons)
@@ -19,15 +22,17 @@ const HomePage: NextPage<Props> = ({ pokemons }) => {
   return (
     <Layout title="Listado de Pokemons">
 
-      <ul>
+      {/* usamos Grid Container de NextUI y usamos las propiedades gap 2 para indicar la distancia
+      entre las imagenes y el justify flex-start*/}
+      <Grid.Container gap={2} justify='flex-start'>
         {
-          //desestructuramos las prop pokemons
-          pokemons.map(({ id, name }) => (
-            <li key={id}>
-              #{ id } - { name }</li>
+          //recorremos el listado de pokemons de las props recibidas arribas y creadas abajo en getStaticProps
+          pokemons.map(( pokemon ) => (
+            //importamos el componente creado por nosotros PokemonCard components/pokemon
+           <PokemonCard  key={ pokemon.id } pokemon={ pokemon }/>
           ))
         }
-      </ul>
+      </Grid.Container>
     </Layout>
   )
 }
