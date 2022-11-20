@@ -1,9 +1,18 @@
+import { useState } from "react";
 
 import { Layout } from "../../components/layouts"
 import { NextPage, GetStaticProps, GetStaticPaths } from 'next';
 import pokeAPi from '../../api/pokeApi';
 import { Pokemon } from '../../interfaces';
 import { Button, Card, Container, Grid, Text, Image } from "@nextui-org/react";
+import { localFavorites } from "../../utils";
+
+//para usar la libreria canvas-confetti para dar efecto al pulsar el boton de favoritos
+//ademas de instalarlo con --> yarn add canvas-confetti debemos poner tambien en la terminal
+//yarn add -D @types/canvas-confetti
+import confetti from 'canvas-confetti';
+
+
 
 //HEMOS CREADO UNA PAGINA CON UN ARGUMENTO DINAMICO [id]
 
@@ -16,8 +25,42 @@ interface Props {
 
 const PokemonPage: NextPage<Props> = ({ pokemon }) => {
 
+  //usamos un useState para conocer el estado del pokemon si esta en favorites
+  //de inicio usamos la funcion creada en utils/localFavorites para saber si es true o false su estado
+  //usamos si es true o false para cambiar el estado del boton de estar en favoritos o no
+  const [isInFavorites, setIsInFavorites] = useState(localFavorites.existInFavorites(pokemon.id));
+
+  //creamos una funcion que la usaremos como toggle, como un interruptor al clickar se activa al volver a clickar se desactiva
+  const ontoggleFavorite = () => {
+    //usamos la funcion creada en utils/localFavorites
+    localFavorites.toggleFavorite(pokemon.id);
+
+    //cambiamos el estado del boton al ser pulsado de favoritos a no favoritos
+    setIsInFavorites(!isInFavorites);
+
+    //usamos la libreria canvas confetti instalada con yarn add canvas-confetti
+    //para usar un efecto si el usuario pone algun pokemon en favoritos
+    if ( isInFavorites) return; //si es true return y no ejcuta el codigo de abajo
+
+    //usamos la libreria canvas-confetti para el efecto del boton de favoritos 
+    //usamos los parametros para el efecto que podemos cambiar ver video 68
+    confetti({
+      zIndex: 999,
+      particleCount: 100,
+      spread: 160,
+      angle: -100,
+      origin: {
+        x: 1,
+        y: 0
+      }
+    })
+  }
+
+
+
+
   return (
-    <Layout title='Algun Pokemon'>
+    <Layout title={pokemon.name}>
 
       {/* importamos Grid de NextUI */}
       <Grid.Container css={{ marginTop: '5px' }} gap={2}>
@@ -36,7 +79,7 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
 
         {/* usamos otro Grid de NextUI para mostrar la informacion del Pokemon seleccionado
         creamos el responive para las diferentes tamaños de pantalla en los atributos del Grid */}
-        <Grid xs={12} sm={8}>
+        <Grid xs={12} sm={8} >
           <Card>
             {/* los boots de indexacion de las paginas se fijan en el header SEO*/}
             <Card.Header css={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -44,9 +87,10 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
 
               <Button
                 color="gradient"
-                ghost //ghost se usa para que el boton solo se vea la linea exterior, el contorno del boton
+                ghost={!isInFavorites} //ghost se usa para que el boton solo se vea la linea exterior, el contorno del boton dependiendo si esta el pokemon en favoritos o no
+                onClick={ontoggleFavorite} //llamamos a la funcion creada arriba
               >
-                Guardar en favoritos
+                {isInFavorites ? 'En favoritos' : 'Guardar en favoritos'}
               </Button>
             </Card.Header>
 
@@ -55,29 +99,29 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
 
               <Container direction='row' display='flex'>
                 {/* mostramos las diferentes imagenes del pokemon seleccionado */}
-                <Image 
-                  src= { pokemon.sprites.front_default}
-                  alt={ pokemon.name }
-                  width={ 100 }
-                  height= { 100 }
+                <Image
+                  src={pokemon.sprites.front_default}
+                  alt={pokemon.name}
+                  width={100}
+                  height={100}
                 />
-                  <Image 
-                  src= { pokemon.sprites.back_default}
-                  alt={ pokemon.name }
-                  width={ 100 }
-                  height= { 100 }
+                <Image
+                  src={pokemon.sprites.back_default}
+                  alt={pokemon.name}
+                  width={100}
+                  height={100}
                 />
-                  <Image 
-                  src= { pokemon.sprites.front_shiny}
-                  alt={ pokemon.name }
-                  width={ 100 }
-                  height= { 100 }
+                <Image
+                  src={pokemon.sprites.front_shiny}
+                  alt={pokemon.name}
+                  width={100}
+                  height={100}
                 />
-                  <Image 
-                  src= { pokemon.sprites.back_shiny}
-                  alt={ pokemon.name }
-                  width={ 100 }
-                  height= { 100 }
+                <Image
+                  src={pokemon.sprites.back_shiny}
+                  alt={pokemon.name}
+                  width={100}
+                  height={100}
                 />
 
               </Container>
