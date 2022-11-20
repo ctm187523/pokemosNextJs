@@ -12,7 +12,7 @@ export const FavoritePokemons: FC<Props> = ({ pokemons }) => {
             {
                 pokemons.map(id => (
                     //usamos el componente components/pokemon/FavoriteCardPokemons
-                   <FavoriteCardPokemons pokemonId={ id }/>
+                   <FavoriteCardPokemons key={ id } pokemonId={ id }/>
                 ))
             }
         </Grid.Container >

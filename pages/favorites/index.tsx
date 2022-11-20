@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { Layout } from '../../components/layouts'
-import { FavoriteCardPokemons, FavoritePokemons } from '../../components/pokemon';
+import {  FavoritePokemons } from '../../components/pokemon';
 import { NoFavorites } from '../../components/ui'
 
 import { localFavorites } from '../../utils';
