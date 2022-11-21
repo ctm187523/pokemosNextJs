@@ -16,7 +16,7 @@ export const PokemonCard: FC<Props> = ({ pokemon }) => {
     //metodo que usamos al ser pulsado una tarjeta(Card)
     const onClick = () => {
         //navegamos a la ruta pokemon/id del pokemon pulsado
-        router.push(`/pokemon/${ pokemon.id }`);
+        router.push(`/name/${ pokemon.name }`);
     }
 
 

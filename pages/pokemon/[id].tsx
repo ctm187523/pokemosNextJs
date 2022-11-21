@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import { Layout } from "../../components/layouts"
 import { NextPage, GetStaticProps, GetStaticPaths } from 'next';
-import pokeAPi from '../../api/pokeApi';
 import { Pokemon } from '../../interfaces';
 import { Button, Card, Container, Grid, Text, Image } from "@nextui-org/react";
 import { localFavorites } from "../../utils";
@@ -11,6 +10,7 @@ import { localFavorites } from "../../utils";
 //ademas de instalarlo con --> yarn add canvas-confetti debemos poner tambien en la terminal
 //yarn add -D @types/canvas-confetti
 import confetti from 'canvas-confetti';
+import { getPokemonInfo } from '../../utils/getPokemonInfo';
 
 
 
@@ -40,7 +40,7 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
 
     //usamos la libreria canvas confetti instalada con yarn add canvas-confetti
     //para usar un efecto si el usuario pone algun pokemon en favoritos
-    if ( isInFavorites) return; //si es true return y no ejcuta el codigo de abajo
+    if (isInFavorites) return; //si es true return y no ejcuta el codigo de abajo
 
     //usamos la libreria canvas-confetti para el efecto del boton de favoritos 
     //usamos los parametros para el efecto que podemos cambiar ver video 68
@@ -167,11 +167,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   //lo tipamos con as { id: string }
   const { id } = ctx.params as { id: string };
 
-  //usamos pokeApi de api/pokeApi para la request y usamos la interfaz Pokemon creada en interfaces/pokemon-full para tipar la respuesta
-  //desestructuramos la data que sera la informacion del Pokemon, en la request usamos el id para recibir la informacion del pokemon seleccionado
-  const { data } = await pokeAPi.get<Pokemon>(`/pokemon/${id}`);
-
-
+  
 
   return {
     //las props colocadas aqui se mandan a las props de este mismo componente
@@ -179,7 +175,8 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     //y con todos los campos completos
     props: {
       //devolvemos la data que es toda la informacion del pokemon recibida de la request
-      pokemon: data
+      //para la request usamos el metdo getPokemonInfo del archivo utils/getPokemonInfo
+      pokemon: await getPokemonInfo( id )
     }
   }
 }
