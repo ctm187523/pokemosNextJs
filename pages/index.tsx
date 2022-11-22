@@ -17,7 +17,6 @@ interface Props {
 //en Lugar de NextPage podriamos usar como hemos echo en otros componentes FC -funcional component
 const HomePage: NextPage<Props> = ({ pokemons }) => {
 
-  //console.log(pokemons)
 
   return (
     <Layout title="Listado de Pokemons">
@@ -27,9 +26,9 @@ const HomePage: NextPage<Props> = ({ pokemons }) => {
       <Grid.Container gap={2} justify='flex-start'>
         {
           //recorremos el listado de pokemons de las props recibidas arribas y creadas abajo en getStaticProps
-          pokemons.map(( pokemon ) => (
+          pokemons.map((pokemon) => (
             //importamos el componente creado por nosotros PokemonCard components/pokemon
-           <PokemonCard  key={ pokemon.id } pokemon={ pokemon }/>
+            <PokemonCard key={pokemon.id} pokemon={pokemon} />
           ))
         }
       </Grid.Container>
