@@ -157,7 +157,9 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
             //mandamos los params que es lo contenido en pokemonsName cada uno de los name que tendran los diferentes pokemons pasamos el name al argumento dinamico de esta pagina [name].tsx
             params: { name: name }
         })),
-        fallback: false //con fallback false decimos que si la peticion es un id que no existe muestre error 404
+        //fallback: false //con fallback false decimos que si la peticion es un id que no existe muestre error 404
+        fallback: 'blocking' //usamos fallback en 'blocking' para decirle que nosotros hemos construido en build 151 paginas si alguien pide la 152 y existe la genere despues de haver echo el build ya en produccion usamos el Incremental Static Generation(ISG)
+
     }
 }
 
@@ -172,6 +174,20 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     //lo tipamos con as { name: string }
     const { name } = ctx.params as { name: string };
 
+    const pokemon = await getPokemonInfo(name); //hemos modificado el archivo utils/getPokemonInfo para manejar el Incremental Static Generation(ISG)
+
+    //comprobamos si tenemos un respuesta del pokemon solicitado por name usamos el Incremental Static Generation(ISG)
+    //si no tenemos una respuesta satisfactoria redirigimos al home, no la hacemos permanente
+    //si tenemos una respuesta satisfactoria aunque solo tengamos en el build 151 pokemons y demanda el usauario 152 se genera una nueva pagina
+    if (!pokemon) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            }
+        }
+    }
+
 
     return {
         //las props colocadas aqui se mandan a las props de este mismo componente
@@ -180,7 +196,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
         props: {
             //devolvemos la data que es toda la informacion del pokemon recibida de la request
             //para la request usamos el metdo getPokemonInfo del archivo utils/getPokemonInfo
-            pokemon: await getPokemonInfo( name )
+            pokemon: pokemon
         }
     }
 }

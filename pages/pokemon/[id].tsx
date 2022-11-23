@@ -152,7 +152,9 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
       //mandamos los params que es lo contenido en pokemosn151 cada uno de los id que tendran los diferentes pokemosn pasamos el id al arguemento dinamico de esta pagina [id].tsx
       params: { id: id }
     })),
-    fallback: false //con fallback false decimos que si la peticion es un id que no existe muestre error 404
+    //fallback: false //con fallback false decimos que si la peticion es un id que no existe muestre error 404
+    fallback: 'blocking' //usamos fallback en 'blocking' para decirle que nosotros hemos construido en build 151 paginas si alguien pide la 152 y existe la genere despues de haver echo el build ya en produccion usamos el Incremental Static Generation(ISG)
+
   }
 }
 
@@ -167,7 +169,19 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   //lo tipamos con as { id: string }
   const { id } = ctx.params as { id: string };
 
-  
+  const pokemon = await getPokemonInfo( id ); //hemos modificado el archivo utils/getPokemonInfo para manejar el Incremental Static Generation(ISG)
+
+  //comprobamos si tenemos un respuesta del pokemon solicitado por id usamos el Incremental Static Generation(ISG)
+  //si no tenemos una respuesta satisfactoria redirigimos al home, no la hacemos permanente
+  //si tenemos una respuesta satisfactoria aunque solo tengamos en el build 151 pokemons y demanda el usauario 152 se genera una nueva pagina
+  if ( !pokemon ) {
+    return {
+      redirect: { 
+        destination: '/',
+        permanent: false,
+      }
+    }
+  }
 
   return {
     //las props colocadas aqui se mandan a las props de este mismo componente
@@ -176,9 +190,17 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     props: {
       //devolvemos la data que es toda la informacion del pokemon recibida de la request
       //para la request usamos el metdo getPokemonInfo del archivo utils/getPokemonInfo
-      pokemon: await getPokemonInfo( id )
-    }
+      //comentamos esta linea de codigo porque usamos el Incremental Static Generation(ISG)
+      //es opcional la usamos si queremos que se generen nuevas paginas si existen y no estan en el build cargadas ver linea 156
+      //pokemon: await getPokemonInfo( id )
+      pokemon: pokemon //usamos la funcion creada arriba linea 172 para usal el Incremental Static Generation(ISG) ver video 82
+    },
+    //usamos el Incremental Static Regeneration(ISR), es opcional
+    //lo usamos para decirle a Next que cada 60 segundos * 60 minutos * 24, es decir que cada dia se revalide la pagina
+    //en total serian 86400 segundos que es los segundos de un dia estos valores se pueden modificar y ajustar a lo que deseemos
+    //en este caso si al cambiar la data, la informacion de los Pokemons se actualizaria el contenido
+    revalidate: 8640,
   }
-}
+} 
 
 export default PokemonPage; //importante usamos la exportacion por defecto
